@@ -1,6 +1,6 @@
 # RealRestorer (Pinokio)
 
-Pinokio launcher for [RealRestorer](https://github.com/yfyang007/RealRestorer): generalizable real-world image restoration using the upstream **patched `diffusers`** checkout and a small **Gradio** UI in `app/ui.py`.
+Pinokio launcher for [RealRestorer](https://github.com/yfyang007/RealRestorer): generalizable real-world image restoration using the upstream **patched `diffusers`** checkout and a small **Gradio** UI in `ui.py`.
 
 ## What you get
 

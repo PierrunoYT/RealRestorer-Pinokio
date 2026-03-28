@@ -6,7 +6,6 @@ module.exports = {
       params: {
         venv: "env",
         env: {},
-        path: "app",
         message: ["python ui.py --host 127.0.0.1 --port {{port}}"],
         on: [
           {

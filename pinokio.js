@@ -5,7 +5,7 @@ module.exports = {
     "Generalizable real-world image restoration (diffusers + Gradio). CUDA recommended; first run downloads HF weights.",
   icon: "icon.jpg",
   menu: async (kernel, info) => {
-    let installed = info.exists("app/env")
+    let installed = info.exists("env")
     let running = {
       install: info.running("install.js"),
       start: info.running("start.js"),

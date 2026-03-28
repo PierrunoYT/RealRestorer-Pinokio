@@ -14,7 +14,7 @@ module.exports = {
       when: "{{exists('app/RealRestorer')}}",
       method: "shell.run",
       params: {
-        venv: "env",
+        venv: "../../env",
         path: "app/RealRestorer",
         message: ["git pull"],
       },
@@ -22,7 +22,7 @@ module.exports = {
     {
       method: "shell.run",
       params: {
-        venv: "env",
+        venv: "../../../env",
         path: "app/RealRestorer/diffusers",
         message: ["uv pip install -e ."],
       },
@@ -30,7 +30,7 @@ module.exports = {
     {
       method: "shell.run",
       params: {
-        venv: "env",
+        venv: "../../env",
         path: "app/RealRestorer",
         message: ["uv pip install -r requirements.txt", "uv pip install -e ."],
       },
@@ -39,7 +39,6 @@ module.exports = {
       method: "shell.run",
       params: {
         venv: "env",
-        path: "app",
         message: ["uv pip install -r requirements.txt"],
       },
     },
@@ -48,7 +47,7 @@ module.exports = {
       params: {
         uri: "torch.js",
         params: {
-          path: "app",
+          path: ".",
           venv: "env",
         },
       },
@@ -57,7 +56,6 @@ module.exports = {
       method: "shell.run",
       params: {
         venv: "env",
-        path: "app",
         message: [
           "python -c \"from diffusers import RealRestorerPipeline; print(RealRestorerPipeline.__name__)\"",
         ],

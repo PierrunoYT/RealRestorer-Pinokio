@@ -11,7 +11,7 @@ import gradio as gr
 import torch
 from PIL import Image
 
-OUTPUT_DIR = Path(__file__).resolve().parent.parent / "outputs"
+OUTPUT_DIR = Path(__file__).resolve().parent / "outputs"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 PIPE = None
