@@ -3,7 +3,7 @@ module.exports = {
   title: "RealRestorer",
   description:
     "Generalizable real-world image restoration (diffusers + Gradio). CUDA recommended; first run downloads HF weights.",
-  icon: "icon.png",
+  icon: "icon.jpg",
   menu: async (kernel, info) => {
     let installed = info.exists("env")
     let running = {
