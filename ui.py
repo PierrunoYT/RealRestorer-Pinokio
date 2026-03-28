@@ -49,7 +49,7 @@ def get_pipe(use_cuda: bool, cpu_offload: bool):
     dtype = _dtype_for_device(use_cuda)
     pipe = RealRestorerPipeline.from_pretrained(
         "RealRestorer/RealRestorer",
-        torch_dtype=dtype,
+        dtype=dtype,
     )
     if use_cuda and torch.cuda.is_available():
         if cpu_offload:
