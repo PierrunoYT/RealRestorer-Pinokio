@@ -1,16 +1,6 @@
 module.exports = {
   run: [
     {
-      method: "script.start",
-      params: {
-        uri: "torch.js",
-        params: {
-          path: "app",
-          venv: "env",
-        },
-      },
-    },
-    {
       when: "{{!exists('app/RealRestorer')}}",
       method: "shell.run",
       params: {
@@ -51,6 +41,16 @@ module.exports = {
         venv: "env",
         path: "app",
         message: ["uv pip install -r requirements.txt"],
+      },
+    },
+    {
+      method: "script.start",
+      params: {
+        uri: "torch.js",
+        params: {
+          path: "app",
+          venv: "env",
+        },
       },
     },
     {
