@@ -57,6 +57,7 @@ module.exports = {
       method: "shell.run",
       params: {
         venv: "env",
+        path: "app",
         message: [
           "python -c \"from diffusers import RealRestorerPipeline; print(RealRestorerPipeline.__name__)\"",
         ],
