@@ -8,6 +8,13 @@ module.exports = {
       },
     },
     {
+      when: "{{exists('app/env')}}",
+      method: "fs.rm",
+      params: {
+        path: "app/env",
+      },
+    },
+    {
       when: "{{exists('app/RealRestorer')}}",
       method: "fs.rm",
       params: {

@@ -16,7 +16,7 @@ module.exports = {
       },
     },
     {
-      when: "{{exists('env') && exists('app/RealRestorer')}}",
+      when: "{{exists('app/env') && exists('app/RealRestorer')}}",
       method: "shell.run",
       params: {
         venv: "env",
@@ -25,7 +25,7 @@ module.exports = {
       },
     },
     {
-      when: "{{exists('env') && exists('app/RealRestorer')}}",
+      when: "{{exists('app/env') && exists('app/RealRestorer')}}",
       method: "shell.run",
       params: {
         venv: "env",
@@ -34,7 +34,7 @@ module.exports = {
       },
     },
     {
-      when: "{{exists('env') && exists('app/RealRestorer')}}",
+      when: "{{exists('app/env') && exists('app/RealRestorer')}}",
       method: "shell.run",
       params: {
         venv: "env",
