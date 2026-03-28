@@ -43,6 +43,15 @@ module.exports = {
       },
     },
     {
+      method: "shell.run",
+      params: {
+        venv: "env",
+        message: [
+          "uv pip install --force-reinstall transformers==4.57.3 tokenizers==0.22.1 qwen-vl-utils==0.0.10",
+        ],
+      },
+    },
+    {
       method: "script.start",
       params: {
         uri: "torch.js",
