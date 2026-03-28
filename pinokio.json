@@ -1,0 +1,6 @@
+{
+  "title": "RealRestorer",
+  "description": "Generalizable real-world image restoration with Gradio UI (Pinokio launcher).",
+  "icon": "icon.png",
+  "version": "5.0"
+}
