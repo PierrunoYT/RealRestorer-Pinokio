@@ -1,6 +1,5 @@
 {
   "title": "RealRestorer",
-  "description": "Generalizable real-world image restoration with Gradio UI (Pinokio launcher).",
-  "icon": "icon.jpg",
-  "version": "5.0"
+  "description": "Generalizable real-world image restoration (diffusers + Gradio). CUDA recommended; first run downloads HF weights.",
+  "icon": "icon.jpg"
 }

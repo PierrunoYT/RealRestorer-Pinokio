@@ -10,7 +10,7 @@ module.exports = {
       when: "{{exists('app/RealRestorer')}}",
       method: "shell.run",
       params: {
-        venv: "env",
+        venv: "../../env",
         path: "app/RealRestorer",
         message: ["git pull"],
       },
