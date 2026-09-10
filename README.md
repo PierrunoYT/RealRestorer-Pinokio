@@ -4,7 +4,7 @@ Pinokio launcher for [RealRestorer](https://github.com/yfyang007/RealRestorer): 
 
 ## What you get
 
-- **Install**: PyTorch (via `torch.js`), clone `yfyang007/RealRestorer` into `app/RealRestorer`, editable-install `diffusers`, then the RealRestorer package and UI dependencies.
+- **Install**: clone `yfyang007/RealRestorer` into `app/RealRestorer`, editable-install the patched `diffusers`, then the RealRestorer package and the UI dependencies, and finally the platform-appropriate PyTorch build (via `torch.js`) so nothing downstream can replace it with a CPU wheel.
 - **Start**: Gradio on `127.0.0.1` at the next free port (`{{port}}` in `start.js`). Use **Open Web UI** in Pinokio when the URL is captured.
 - **Inference-only**: RealIR-Bench is not installed.
 
@@ -12,7 +12,11 @@ Pinokio launcher for [RealRestorer](https://github.com/yfyang007/RealRestorer): 
 
 1. **Install** — wait for the import check: `RealRestorerPipeline`.
 2. **Start** — open the Gradio URL, upload an image, choose or edit the prompt, then **Restore**.
-3. Outputs are written under `outputs/` at the project root.
+3. Outputs are written under `outputs/` at the project root, named
+   `realrestorer_<timestamp>_<seed>.png`.
+
+**Update** re-pulls both repositories, reinstalls the pinned dependencies, and
+re-asserts the correct PyTorch build.
 
 ### Recommended inference settings (defaults in UI)
 
@@ -32,7 +36,8 @@ Enable **Model CPU offload** if you are tight on VRAM (slower).
 - **First run is slow**: the model `RealRestorer/RealRestorer` is downloaded from Hugging Face into the HF cache (often `~/.cache/huggingface` or `%USERPROFILE%\.cache\huggingface` on Windows).
 - **VRAM**: use CPU offload, close other GPU apps, or reduce `size_level` if the pipeline supports it.
 - **CUDA**: For practical speed, use an NVIDIA GPU with a CUDA build of PyTorch (see `torch.js`).
-- **Reset** removes the `env` venv and the `app/RealRestorer` clone; **Install** again to recreate.
+- **Reset** removes the `env` venv, the `app/RealRestorer` clone and the installation marker; **Install** again to recreate.
+- **Seed**: set it to `-1` (or leave it blank) for a random seed.
 
 ## Upstream references
 
