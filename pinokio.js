@@ -1,7 +1,9 @@
 module.exports = {
   version: "5.0",
   menu: async (kernel, info) => {
-    let installed = info.exists("env")
+    // A venv on its own is not enough: a failed or partial install can leave
+    // `env` behind without the upstream checkout that start.js needs.
+    let installed = info.exists("env") && info.exists("app/RealRestorer")
     let running = {
       install: info.running("install.js"),
       start: info.running("start.js"),

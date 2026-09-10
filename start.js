@@ -5,7 +5,6 @@ module.exports = {
       method: "shell.run",
       params: {
         venv: "env",
-        env: {},
         message: ["python ui.py --host 127.0.0.1 --port {{port}}"],
         on: [
           {

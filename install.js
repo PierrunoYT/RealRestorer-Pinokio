@@ -7,7 +7,6 @@ module.exports = {
       when: "{{!exists('app/RealRestorer')}}",
       method: "shell.run",
       params: {
-        venv: "env",
         message: [
           "git clone https://github.com/yfyang007/RealRestorer.git app/RealRestorer",
         ],
@@ -17,7 +16,6 @@ module.exports = {
       when: "{{exists('app/RealRestorer')}}",
       method: "shell.run",
       params: {
-        venv: "../../env",
         path: "app/RealRestorer",
         message: ["git pull"],
       },

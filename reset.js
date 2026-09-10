@@ -35,5 +35,12 @@ module.exports = {
         path: "app/RealRestorer",
       },
     },
+    {
+      when: "{{exists('INSTALLATION_COMPLETE.txt')}}",
+      method: "fs.rm",
+      params: {
+        path: "INSTALLATION_COMPLETE.txt",
+      },
+    },
   ],
 }
