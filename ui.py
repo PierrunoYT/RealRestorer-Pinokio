@@ -4,7 +4,10 @@ Gradio UI for RealRestorer inference (Pinokio launcher).
 from __future__ import annotations
 
 import argparse
+import gc
 import random
+import threading
+import time
 from pathlib import Path
 
 import gradio as gr
@@ -14,8 +17,12 @@ from PIL import Image
 OUTPUT_DIR = Path(__file__).resolve().parent / "outputs"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
+MAX_SEED = 2**31 - 1
+
 PIPE = None
 PIPE_KWARGS: dict = {}
+# The pipeline is a single shared, stateful object: serialize loads and calls.
+PIPE_LOCK = threading.Lock()
 
 PRESETS: list[tuple[str, str]] = [
     ("Blur removal", "Please deblur the image and make it sharper"),
@@ -38,11 +45,26 @@ def _dtype_for_device(use_cuda: bool):
     return torch.float32
 
 
+def _release_pipe():
+    """Drop the cached pipeline and give its VRAM back."""
+    global PIPE, PIPE_KWARGS
+    PIPE = None
+    PIPE_KWARGS = {}
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+
+
 def get_pipe(use_cuda: bool, cpu_offload: bool):
     global PIPE, PIPE_KWARGS
     want = {"use_cuda": use_cuda, "cpu_offload": cpu_offload}
     if PIPE is not None and PIPE_KWARGS == want:
-        return PIPE, None
+        return PIPE
+
+    # A pipeline built for a different device/offload mode is still holding
+    # memory; free it before loading the replacement.
+    if PIPE is not None:
+        _release_pipe()
 
     from diffusers import RealRestorerPipeline
 
@@ -61,7 +83,41 @@ def get_pipe(use_cuda: bool, cpu_offload: bool):
 
     PIPE = pipe
     PIPE_KWARGS = want.copy()
-    return PIPE, None
+    return PIPE
+
+
+def _resolve_seed(seed) -> int:
+    """Coerce the seed box (which can be blank, float or negative) to an int."""
+    try:
+        seed_i = int(seed)
+    except (TypeError, ValueError):
+        return random.randint(0, MAX_SEED)
+    if seed_i < 0:
+        return random.randint(0, MAX_SEED)
+    return seed_i % (MAX_SEED + 1)
+
+
+def _int_or(value, fallback: int) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return fallback
+
+
+def _float_or(value, fallback: float) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return fallback
+
+
+def _first_image(result):
+    images = getattr(result, "images", None)
+    if images is None and isinstance(result, (list, tuple)):
+        images = result
+    if not images:
+        return None
+    return images[0]
 
 
 def run_restore(
@@ -77,7 +133,9 @@ def run_restore(
 ):
     if image is None:
         return None, "Upload an image first."
-    if not prompt.strip():
+
+    prompt = (prompt or "").strip()
+    if not prompt:
         return None, "Enter a prompt (or pick a preset)."
 
     if use_cuda and not torch.cuda.is_available():
@@ -86,32 +144,43 @@ def run_restore(
             "CUDA was requested but is not available. Uncheck “Use CUDA” or install a CUDA build of PyTorch.",
         )
 
-    try:
-        pipe, _ = get_pipe(use_cuda=use_cuda, cpu_offload=cpu_offload)
-    except Exception as e:
-        return None, f"Failed to load model: {e}"
-
     pil = image.convert("RGB")
-    seed_i = int(seed) if seed >= 0 else random.randint(0, 2**31 - 1)
-    steps = int(num_inference_steps)
-    size_i = int(size_level)
+    seed_i = _resolve_seed(seed)
+    steps = max(1, _int_or(num_inference_steps, 28))
+    size_i = max(64, _int_or(size_level, 1024))
 
+    with PIPE_LOCK:
+        try:
+            pipe = get_pipe(use_cuda=use_cuda, cpu_offload=cpu_offload)
+        except Exception as e:
+            # Never leave a half-built pipeline cached.
+            _release_pipe()
+            return None, f"Failed to load model: {e}"
+
+        try:
+            result = pipe(
+                image=pil,
+                prompt=prompt,
+                negative_prompt=(negative_prompt or "").strip(),
+                num_inference_steps=steps,
+                guidance_scale=_float_or(guidance_scale, 3.0),
+                seed=seed_i,
+                size_level=size_i,
+            )
+        except Exception as e:
+            return None, f"Inference failed: {e}"
+
+    out = _first_image(result)
+    if out is None:
+        return None, "Inference returned no image."
+
+    stamp = time.strftime("%Y%m%d-%H%M%S")
+    out_path = OUTPUT_DIR / f"realrestorer_{stamp}_{seed_i}.png"
     try:
-        result = pipe(
-            image=pil,
-            prompt=prompt.strip(),
-            negative_prompt=negative_prompt or "",
-            num_inference_steps=steps,
-            guidance_scale=float(guidance_scale),
-            seed=seed_i,
-            size_level=size_i,
-        )
-        out = result.images[0]
-        out_path = OUTPUT_DIR / f"realrestorer_{seed_i}.png"
         out.save(out_path)
-        return out, f"Saved to {out_path}"
-    except Exception as e:
-        return None, f"Inference failed: {e}"
+    except OSError as e:
+        return out, f"Restored, but saving to {out_path} failed: {e}"
+    return out, f"Saved to {out_path} (seed {seed_i})"
 
 
 def apply_preset(key: str):
