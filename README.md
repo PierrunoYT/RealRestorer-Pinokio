@@ -41,7 +41,6 @@ Enable **Model CPU offload** if you are tight on VRAM (slower).
 
 ## Upstream references
 
-- Paper: [arXiv:2603.25502](https://arxiv.org/abs/2603.25502)
 - Code: [yfyang007/RealRestorer](https://github.com/yfyang007/RealRestorer)
 - Model: [RealRestorer/RealRestorer](https://huggingface.co/RealRestorer/RealRestorer)
 

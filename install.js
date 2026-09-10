@@ -79,8 +79,7 @@ module.exports = {
           "RealRestorer installation completed.\n\n" +
           "Next: Start the app and open the Gradio URL.\n" +
           "First inference downloads model weights from Hugging Face.\n\n" +
-          "Upstream: https://github.com/yfyang007/RealRestorer\n" +
-          "Paper: https://arxiv.org/abs/2603.25502\n",
+          "Upstream: https://github.com/yfyang007/RealRestorer\n",
       },
     },
   ],
